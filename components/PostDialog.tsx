@@ -12,8 +12,8 @@ import { Images } from "lucide-react"
 import { useRef, useState } from "react"
 import { readFileAsDataUrl } from "@/lib/utils"
 import Image from "next/image"
-import { createPostAction } from "@/lib/serveractions"
 import { toast } from "sonner"
+import { createPostAction } from "@/lib/serveractions"
 
 export function PostDialog({ setOpen, open, src }: { setOpen: any, open: boolean, src: string }) {
     const inputRef = useRef<HTMLInputElement>(null);

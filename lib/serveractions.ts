@@ -6,7 +6,8 @@ import { currentUser } from "@clerk/nextjs/server"
 import { v2 as cloudinary } from 'cloudinary';
 import connectDB from "./db";
 import { revalidatePath } from "next/cache";
-import { Comment } from "@/models/comment.model";
+import { Comment, IComment } from "@/models/comment.model";
+import { ObjectId } from "mongoose";
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -27,7 +28,7 @@ export const createPostAction = async (inputText: string, selectedFile: string) 
     const userDatabase: IUser = {
         firstName: user.firstName || "Prakash",
         lastName: user.lastName || "R",
-        userId: user.id || "prakash",
+        userId: user.id,
         profilePhoto: user.imageUrl
     }
     let uploadResponse;
@@ -65,7 +66,7 @@ export const getAllPosts = async () => {
 }
 
 // delete post by id
-export const deletePostAction = async (postId: string) => {
+export const deletePostAction = async (postId: any) => {
     await connectDB();
     const user = await currentUser();
     if (!user) throw new Error('User not authenticated.');
@@ -95,7 +96,7 @@ export const createCommentAction = async (postId: string, formData: FormData) =>
         const userDatabase: IUser = {
             firstName: user.firstName || "Prakash",
             lastName: user.lastName || "R",
-            userId: user.id || "prakash", 
+            userId: user.id,
             profilePhoto: user.imageUrl
         }
         const post = await Post.findById({ _id: postId });
@@ -106,7 +107,7 @@ export const createCommentAction = async (postId: string, formData: FormData) =>
             user: userDatabase,
         });
 
-        post.comments?.push(comment._id);
+        post.comments?.push(comment._id as IComment);
         await post.save();
 
         revalidatePath("/");
